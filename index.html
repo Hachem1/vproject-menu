@@ -243,12 +243,15 @@ const MENU = [
      d) That's it. Just pasting the link above switches the menu over to the sheet.
         The MENU list above then acts only as a fallback if the sheet can't load.
    ============================================================ */
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT-DNm0QQBM3BpOvQpw-YfzO5qMWZS2TeDeMa-Aq37-sULCAB6wZa7ueSk_i8rdqoRCIeFFpj7NAKRS/pub?gid=1841812497&single=true&output=csv"; // published Google Sheet CSV
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1mhvXTLxGvdBPkxk3drjlXrW7UBJQRIgxKgRx8vIzQEw/gviz/tq?tqx=out:csv&gid=1841812497"; // live Google Sheet (gviz)
 
 async function loadFromSheet(){
   if(!SHEET_CSV_URL){ return; }
   try{
-    const res = await fetch(SHEET_CSV_URL);
+    const res = await fetch(
+      SHEET_CSV_URL + (SHEET_CSV_URL.includes('?') ? '&' : '?') + '_cb=' + Date.now(),
+      { cache: 'no-store' }
+    );
     const rows = parseCSV(await res.text());
     const head = rows.shift().map(h => h.trim().toLowerCase());
     const col = n => head.indexOf(n);
