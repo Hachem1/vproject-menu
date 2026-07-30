@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>vproject — Menu / قائمة الطعام</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<script>if(window.self!==window.top){document.documentElement.classList.add('framed');}</script>
+<style>
+  :root{
+    --ink:#22271C;        /* near-black olive, main text */
+    --muted:#6B7060;      /* secondary text */
+    --paper:#EDEFE4;      /* pale sage page background */
+    --card:#FAFBF5;       /* menu card surface */
+    --olive:#2F3A25;      /* deep olive header band + rules */
+    --amber:#C98A22;      /* ochre accent for prices + toggle */
+    --line:#D9DCCB;       /* hairlines */
+    --sans:"Space Grotesk", system-ui, sans-serif;
+    --ar:"El Messiri", "Space Grotesk", system-ui, sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.4;
+  }
+  .viewport{
+    padding:22px 14px 40px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+  }
+  /* Standalone (Cloudflare/GitHub Pages, or opened directly): the    */
+  /* page scrolls normally — the most reliable behaviour on phones.   */
+  /* Only when embedded in an iframe (e.g. Google Sites) do we switch  */
+  /* to scrolling inside the frame so a long menu isn't clipped.      */
+  html.framed, html.framed body{ height:100%; }
+  html.framed .viewport{
+    height:100%;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .menu{
+    width:100%;
+    max-width:480px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 18px 40px -24px rgba(34,39,28,.5);
+  }
+
+  /* ---------- Header band ---------- */
+  header{
+    background:var(--olive);
+    color:#F1EFE2;
+    padding:22px 22px 20px;
+    position:relative;
+  }
+  .brand{
+    font-weight:700;
+    font-size:34px;
+    letter-spacing:-1px;
+    line-height:1;
+  }
+  .brand .v{color:var(--amber)}
+  .tagline{
+    margin-top:7px;
+    font-size:13px;
+    letter-spacing:.5px;
+    color:#C3C6B2;
+    font-weight:400;
+  }
+
+  /* ---------- Language toggle ---------- */
+  .toggle{
+    position:absolute;
+    top:20px; right:20px;
+    display:inline-flex;
+    background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.22);
+    border-radius:999px;
+    padding:3px;
+  }
+  html[dir="rtl"] .toggle{right:auto; left:20px}
+  .toggle button{
+    font-family:inherit;
+    border:0;
+    background:transparent;
+    color:#DDDFCF;
+    font-size:13px;
+    font-weight:600;
+    padding:5px 13px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:background .18s, color .18s;
+    line-height:1;
+  }
+  .toggle button.active{background:var(--amber); color:#241d08}
+  .toggle button:focus-visible{outline:2px solid #F1EFE2; outline-offset:2px}
+  .toggle button[data-lang="ar"]{font-family:var(--ar); font-size:15px}
+
+  /* ---------- Sections ---------- */
+  .body{padding:6px 22px 24px}
+  .section{padding:20px 0 4px}
+  .section + .section{border-top:1px solid var(--line)}
+  .cat{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .cat .label{
+    font-size:19px;
+    font-weight:700;
+    color:var(--olive);
+    letter-spacing:-.2px;
+  }
+  .cat .mark{width:9px; height:9px; background:var(--amber); border-radius:50%; flex:none}
+
+  /* ---------- Items ---------- */
+  .item{padding:9px 0}
+  .item .top{display:flex; align-items:baseline}
+  .item .name{font-weight:500; font-size:16px; white-space:nowrap}
+  .item .dots{
+    flex:1;
+    margin:0 8px;
+    border-bottom:2px dotted var(--line);
+    transform:translateY(-4px);
+    min-width:18px;
+  }
+  .item .price{font-weight:700; color:var(--amber); font-size:16px; white-space:nowrap}
+  .item .desc{margin-top:3px; font-size:13px; color:var(--muted); max-width:88%}
+
+  footer{
+    text-align:center;
+    padding:16px;
+    font-size:12px;
+    color:var(--muted);
+    border-top:1px solid var(--line);
+  }
+
+  /* ---------- Arabic / RTL ---------- */
+  html[dir="rtl"] body{font-family:var(--ar)}
+  html[dir="rtl"] .brand{font-family:var(--sans)}  /* keep wordmark latin */
+  html[dir="rtl"] .cat .label,
+  html[dir="rtl"] .item .name,
+  html[dir="rtl"] .tagline,
+  html[dir="rtl"] footer{font-family:var(--ar)}
+  html[dir="rtl"] .item .name{font-size:17px}
+  html[dir="rtl"] .cat .label{font-size:21px}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important}
+  }
+  noscript{display:block; padding:24px; text-align:center; color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="viewport">
+  <main class="menu">
+    <header>
+      <div class="brand"><span class="v">v</span>project</div>
+      <div class="tagline" data-en="Beirut kitchen &amp; café" data-ar="مطبخ ومقهى بيروتي"></div>
+      <div class="toggle" role="group" aria-label="Language">
+        <button data-lang="en" class="active" onclick="setLang('en')">EN</button>
+        <button data-lang="ar" onclick="setLang('ar')">ع</button>
+      </div>
+    </header>
+
+    <div class="body" id="menu"></div>
+
+    <footer data-en="Prices in USD · Service not included" data-ar="الأسعار بالدولار الأميركي · الخدمة غير مشمولة"></footer>
+  </main>
+
+  <noscript>Please enable JavaScript to view the menu. · فضلاً فعّل الجافاسكربت لعرض القائمة.</noscript>
+  </div><!-- /.viewport -->
+
+<script>
+/* ============================================================
+   1) EDIT YOUR MENU HERE
+   ------------------------------------------------------------
+   Each section = { en, ar, items:[...] }
+   Each item    = { en, ar, price, dEn (English note), dAr (Arabic note) }
+   dEn / dAr are optional short descriptions. Leave "" for none.
+   Prices are plain text — write them however you like ("$3", "3.50", "-").
+   ============================================================ */
+const MENU = [
+  {
+    en:"Coffee & Drinks", ar:"قهوة ومشروبات",
+    items:[
+      { en:"Lebanese Coffee", ar:"قهوة لبنانية", price:"$2.00", dEn:"With cardamom, small cup", dAr:"بالهيل، فنجان صغير" },
+      { en:"White Coffee",    ar:"قهوة بيضاء",   price:"$2.50", dEn:"Orange-blossom, caffeine-free", dAr:"بماء الزهر، بلا كافيين" },
+      { en:"Mint Lemonade",   ar:"ليموناضة بالنعناع", price:"$3.50", dEn:"Fresh-pressed", dAr:"طازجة" },
+      { en:"Jallab",          ar:"جلّاب",        price:"$3.00", dEn:"Date molasses, pine nuts", dAr:"دبس التمر والصنوبر" },
+      { en:"Ayran",           ar:"عيران",        price:"$2.00", dEn:"", dAr:"" },
+    ]
+  },
+  {
+    en:"Manakish", ar:"مناقيش",
+    items:[
+      { en:"Zaatar Manoushe", ar:"منقوشة زعتر",  price:"$2.50", dEn:"Wood-fired, olive oil", dAr:"على الحطب بزيت الزيتون" },
+      { en:"Cheese Manoushe", ar:"منقوشة جبنة",  price:"$3.50", dEn:"Akkawi & mozzarella", dAr:"عكاوي وموزاريلا" },
+      { en:"Kishk Manoushe",  ar:"منقوشة كشك",   price:"$3.50", dEn:"Tomato, onion, mint", dAr:"بندورة وبصل ونعناع" },
+      { en:"Spicy Sujuk",     ar:"منقوشة سجق حار", price:"$4.50", dEn:"", dAr:"" },
+    ]
+  },
+  {
+    en:"Plates", ar:"أطباق",
+    items:[
+      { en:"Hummus",         ar:"حمّص",         price:"$4.00", dEn:"Tahini, olive oil, pita", dAr:"طحينة وزيت زيتون وخبز" },
+      { en:"Falafel Plate",  ar:"صحن فلافل",    price:"$5.50", dEn:"Six pieces, turnip pickles", dAr:"ستّ حبّات مع كبيس لفت" },
+      { en:"Grilled Halloumi", ar:"حلوم مشوي",  price:"$6.00", dEn:"", dAr:"" },
+      { en:"Fattoush",       ar:"فتّوش",        price:"$5.00", dEn:"Sumac, toasted bread", dAr:"سمّاق وخبز محمّص" },
+      { en:"Mixed Grill",    ar:"مشاوي مشكّلة", price:"$12.00", dEn:"Shish taouk, kafta, lamb", dAr:"شيش طاووق وكفتة ولحم" },
+    ]
+  },
+  {
+    en:"Sweets", ar:"حلويات",
+    items:[
+      { en:"Knafeh",          ar:"كنافة",       price:"$4.50", dEn:"Cheese, in a sesame bun", dAr:"بالجبنة داخل كعكة" },
+      { en:"Baklava",         ar:"بقلاوة",      price:"$3.50", dEn:"Assorted, per piece 3×", dAr:"مشكّلة، ٣ قطع" },
+      { en:"Rice Pudding",    ar:"رزّ بحليب",   price:"$3.00", dEn:"Rose water", dAr:"بماء الورد" },
+      { en:"Ashta with Honey", ar:"قشطة بالعسل", price:"$4.00", dEn:"", dAr:"" },
+    ]
+  },
+];
+
+/* ============================================================
+   2) (OPTIONAL) LIVE PRICES FROM A GOOGLE SHEET
+   ------------------------------------------------------------
+   Lets a non-technical person edit prices on their phone with no code.
+   Setup:
+     a) Make a Google Sheet with a header row exactly:
+          section_en | section_ar | item_en | item_ar | price | desc_en | desc_ar
+        Fill one row per item.
+     b) File → Share → Publish to web → pick that sheet → Comma-separated values (.csv) → Publish.
+     c) Copy the link it gives you and paste it below into SHEET_CSV_URL.
+     d) That's it. Just pasting the link above switches the menu over to the sheet.
+        The MENU list above then acts only as a fallback if the sheet can't load.
+   ============================================================ */
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT-DNm0QQBM3BpOvQpw-YfzO5qMWZS2TeDeMa-Aq37-sULCAB6wZa7ueSk_i8rdqoRCIeFFpj7NAKRS/pub?gid=1841812497&single=true&output=csv"; // published Google Sheet CSV
+
+async function loadFromSheet(){
+  if(!SHEET_CSV_URL){ return; }
+  try{
+    const res = await fetch(SHEET_CSV_URL);
+    const rows = parseCSV(await res.text());
+    const head = rows.shift().map(h => h.trim().toLowerCase());
+    const col = n => head.indexOf(n);
+    const map = new Map();       // preserves section order
+    for(const r of rows){
+      if(!r[col("item_en")] && !r[col("item_ar")]) continue;
+      const key = r[col("section_en")] || r[col("section_ar")];
+      if(!map.has(key)){
+        map.set(key, { en:r[col("section_en")], ar:r[col("section_ar")], items:[] });
+      }
+      map.get(key).items.push({
+        en:r[col("item_en")], ar:r[col("item_ar")], price:r[col("price")],
+        dEn:col("desc_en")>-1 ? r[col("desc_en")] : "",
+        dAr:col("desc_ar")>-1 ? r[col("desc_ar")] : ""
+      });
+    }
+    if(map.size){ MENU.length = 0; MENU.push(...map.values()); }
+  }catch(e){ /* keep the built-in MENU as fallback */ }
+}
+
+// minimal CSV parser (handles quoted fields with commas)
+function parseCSV(text){
+  const out=[]; let row=[], field="", q=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){
+      if(c==='"'){ if(text[i+1]==='"'){field+='"';i++;} else q=false; }
+      else field+=c;
+    }else{
+      if(c==='"') q=true;
+      else if(c===','){ row.push(field); field=""; }
+      else if(c==='\n'){ row.push(field); out.push(row); row=[]; field=""; }
+      else if(c!=='\r') field+=c;
+    }
+  }
+  if(field.length||row.length){ row.push(field); out.push(row); }
+  return out;
+}
+
+/* ============================================================
+   3) RENDER + LANGUAGE (no need to edit below)
+   ============================================================ */
+let LANG = "en";
+
+function esc(s){ return (s||"").replace(/[&<>]/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m])); }
+
+function render(){
+  const root = document.getElementById("menu");
+  root.innerHTML = MENU.map(sec => `
+    <section class="section">
+      <div class="cat"><span class="mark"></span><span class="label">${esc(sec[LANG])}</span></div>
+      ${sec.items.map(it => {
+        const desc = LANG==="ar" ? it.dAr : it.dEn;
+        return `<div class="item">
+          <div class="top">
+            <span class="name">${esc(it[LANG])}</span>
+            <span class="dots"></span>
+            <span class="price">${esc(it.price)}</span>
+          </div>
+          ${desc ? `<div class="desc">${esc(desc)}</div>` : ""}
+        </div>`;
+      }).join("")}
+    </section>`).join("");
+
+  // swap the header/footer text that lives in data-attributes
+  document.querySelectorAll("[data-en]").forEach(el=>{
+    el.textContent = el.getAttribute(LANG==="ar" ? "data-ar" : "data-en");
+  });
+  // toggle button state
+  document.querySelectorAll(".toggle button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.lang===LANG);
+  });
+}
+
+function setLang(l){
+  LANG = l;
+  document.documentElement.setAttribute("dir", l==="ar" ? "rtl":"ltr");
+  document.documentElement.setAttribute("lang", l);
+  render();
+}
+
+// boot
+(async function(){
+  await loadFromSheet();   // no-op unless SHEET_CSV_URL is set
+  render();
+})();
+</script>
+</body>
+</html>
