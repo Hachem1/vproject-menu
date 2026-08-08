@@ -181,7 +181,7 @@
 
     <div class="body" id="menu"></div>
 
-    <footer data-en="Prices in USD · Service not included" data-ar="الأسعار بالدولار الأميركي · الخدمة غير مشمولة"></footer>
+    <footer id="footer-text" data-en="" data-ar=""></footer>
   </main>
 
   <noscript>Please enable JavaScript to view the menu. · فضلاً فعّل الجافاسكربت لعرض القائمة.</noscript>
@@ -224,6 +224,10 @@ async function loadFromSheet(){
     const rows = parseCSV(await res.text());
     const head = rows.shift().map(h => h.trim().toLowerCase());
     const col = n => head.indexOf(n);
+    if(rows[0]){
+      FOOTER.en = rows[0][8]  || ""; // column I
+      FOOTER.ar = rows[0][11] || ""; // column L
+  }
     const map = new Map();       // preserves section order
     for(const r of rows){
       if(!r[col("item_en")] && !r[col("item_ar")]) continue;
@@ -263,7 +267,7 @@ function parseCSV(text){
 /* ============================================================
    3) RENDER + LANGUAGE (no need to edit below)
    ============================================================ */
-let LANG = "en";
+let FOOTER = { en:"", ar:"" };
 
 function esc(s){ return (s||"").replace(/[&<>]/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m])); }
 
@@ -293,6 +297,9 @@ function render(){
   document.querySelectorAll(".toggle button").forEach(b=>{
     b.classList.toggle("active", b.dataset.lang===LANG);
   });
+  const footerEl = document.getElementById("footer-text");
+  if(LANG==="ar" && FOOTER.ar) footerEl.textContent = FOOTER.ar;
+  else if(LANG==="en" && FOOTER.en) footerEl.textContent = FOOTER.en;
 }
 
 function setLang(l){
