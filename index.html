@@ -268,7 +268,8 @@ function parseCSV(text){
    3) RENDER + LANGUAGE (no need to edit below)
    ============================================================ */
 let FOOTER = { en:"", ar:"" };
-
+let LANG = "en";
+  
 function esc(s){ return (s||"").replace(/[&<>]/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m])); }
 
 function render(){
