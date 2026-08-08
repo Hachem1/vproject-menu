@@ -226,7 +226,7 @@ async function loadFromSheet(){
     const col = n => head.indexOf(n);
     if(rows[0]){
       FOOTER.en = rows[0][8]  || ""; // column I
-      FOOTER.ar = rows[0][11] || ""; // column L
+      FOOTER.ar = rows[0][9] || ""; // column J
   }
     const map = new Map();       // preserves section order
     for(const r of rows){
